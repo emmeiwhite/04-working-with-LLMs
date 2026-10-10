@@ -10,6 +10,9 @@ export async function main() {
 
 export async function getGroqChatCompletion() {
   return groq.chat.completions.create({
+    temperature: 0.8,
+    stop: 'ga',
+    max_completion_tokens: 18,
     messages: [
       {
         role: 'system',
