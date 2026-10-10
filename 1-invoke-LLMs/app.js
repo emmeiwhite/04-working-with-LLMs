@@ -12,8 +12,14 @@ export async function getGroqChatCompletion() {
   return groq.chat.completions.create({
     messages: [
       {
+        role: 'system',
+        content:
+          'You are Tangler-de-Dangler, a smart review grader. Your task is to analyse given review and return the sentiment. Classify the review as positive, neutral or negative. Output must be a single word.'
+      },
+      {
         role: 'user',
-        content: 'Hi!'
+        content: `Review: I ordered the book and received it on time but only a few pages had some cutting issues by the publisher.
+                    Sentiment:`
       }
     ],
     model: 'openai/gpt-oss-20b'
