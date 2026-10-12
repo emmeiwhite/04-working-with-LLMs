@@ -26,8 +26,31 @@ const tools = [
 
 export async function main() {
   const chatCompletion = await getGroqChatCompletion()
-  // Print the completion returned by the LLM.
-  console.log(chatCompletion.choices[0]?.message || '')
+
+  const toolCalls = chatCompletion.choices[0].message.tool_calls
+
+  if (!toolCalls) {
+    console.log('Tool Call complete:', chatCompletion.choices[0].message.content)
+
+    return // function end ---> program end
+  }
+
+  // toolCalls is an array as there can be multiple tools
+
+  for (let tool of toolCalls) {
+    console.log(tool.function.arguments)
+
+    const functionName = tool.function.name
+    const functionArgs = tool.function.arguments
+
+    if (functionName === 'websiteSearch') {
+      const toolResult = await websiteSearch(JSON.parse(functionArgs))
+
+      console.log('Tool Result:', toolResult)
+    }
+  }
+
+  //   console.log(JSON.stringify(chatCompletion.choices[0]?.message, null, 2 || ''))
 }
 
 export async function getGroqChatCompletion() {
@@ -62,6 +85,6 @@ main()
 // A tool call function
 async function websiteSearch({ query }) {
   // Here we will do tavily api call
-
+  console.log('Calling web search ...')
   return 'Iphone was launched on 20 September 2024'
 }
