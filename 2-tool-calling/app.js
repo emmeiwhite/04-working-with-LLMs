@@ -1,5 +1,6 @@
 import Groq from 'groq-sdk'
-
+import { createInterface } from 'node:readline/promises'
+import { stdin, stdout } from 'node:process'
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
 
 // To install: npm i @tavily/core
@@ -40,46 +41,65 @@ const messages = [
         If the question can be answered reliably using your existing knowledge, you may answer directly.
 
         Keep answers short and to the point.`
-  },
-  {
-    role: 'user',
-    content: 'When was iphone-16 launched?'
   }
+  //   {
+  //     role: 'user',
+  //     content:
+  //       'Hey, how to stay motivated in life and make best use of time. Share one great advice from the greatest of human being in the history. But share only one advice.'
+  //   }
 ]
 
 export async function main() {
+  const rl = createInterface({ input: stdin, output: stdout }) // means terminal
+
   while (true) {
-    const chatCompletion = await getGroqChatCompletion() // Making an LLM call after each loop
+    const question = await rl.question('You:')
 
-    messages.push(chatCompletion.choices[0].message)
-
-    const toolCalls = chatCompletion.choices[0].message.tool_calls
-
-    if (!toolCalls) {
-      console.log(chatCompletion.choices[0].message.content)
+    //bye
+    if (question === 'bye') {
       break
     }
 
-    // toolCalls is an array as there can be multiple tools
-    for (let tool of toolCalls) {
-      const functionName = tool.function.name
-      const functionArgs = tool.function.arguments
+    messages.push({
+      role: 'user',
+      content: question
+    })
 
-      if (functionName === 'websiteSearch') {
-        const toolResult = await websiteSearch(JSON.parse(functionArgs))
-        //   console.log('Tool Result', toolResult)
+    while (true) {
+      const chatCompletion = await getGroqChatCompletion() // Making an LLM call after each loop
 
-        // Adding the toolResult message in our main messages
+      messages.push(chatCompletion.choices[0].message)
 
-        messages.push({
-          tool_call_id: tool.id,
-          role: 'tool',
-          name: functionName,
-          content: toolResult
-        })
+      const toolCalls = chatCompletion.choices[0].message.tool_calls
+
+      if (!toolCalls) {
+        console.log('Assistant:', chatCompletion.choices[0].message.content)
+        break
+      }
+
+      // toolCalls is an array as there can be multiple tools
+      for (let tool of toolCalls) {
+        const functionName = tool.function.name
+        const functionArgs = tool.function.arguments
+
+        if (functionName === 'websiteSearch') {
+          const toolResult = await websiteSearch(JSON.parse(functionArgs))
+          //   console.log('Tool Result', toolResult)
+
+          // Adding the toolResult message in our main messages
+
+          messages.push({
+            tool_call_id: tool.id,
+            role: 'tool',
+            name: functionName,
+            content: toolResult
+          })
+        }
       }
     }
   }
+
+  rl.close()
 }
 
 /* --
