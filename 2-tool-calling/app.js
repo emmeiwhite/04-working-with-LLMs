@@ -42,11 +42,6 @@ const messages = [
 
         Keep answers short and to the point.`
   }
-  //   {
-  //     role: 'user',
-  //     content:
-  //       'Hey, how to stay motivated in life and make best use of time. Share one great advice from the greatest of human being in the history. But share only one advice.'
-  //   }
 ]
 
 export async function main() {
@@ -101,57 +96,6 @@ export async function main() {
 
   rl.close()
 }
-
-/* --
-export async function main() {
-  const maxTries = 5
-  let counter = 1
-
-  let finalAnswerGenerated = false
-
-  while (counter <= maxTries) {
-    const chatCompletion = await getGroqChatCompletion() // the same function would be invoked in next iteration after messages array is appended with all tool results
-
-    // append assistant messages
-    messages.push(chatCompletion.choices[0].message)
-
-    // Check: did the LLM request any tool call
-    const toolCalls = chatCompletion.choices[0].message.tool_calls
-
-    if (!toolCalls) {
-      console.log(chatCompletion.choices[0].message.content)
-      finalAnswerGenerated = true
-      break
-    }
-
-    for (let tool of toolCalls) {
-      const functionName = tool.function.name
-      const functionArgs = tool.function.arguments
-
-      if (functionName === 'websiteSearch') {
-        const toolResult = await websiteSearch(JSON.parse(functionArgs))
-        //   console.log('Tool Result', toolResult)
-
-        // Adding the toolResult message in our main messages
-
-        messages.push({
-          tool_call_id: tool.id,
-          role: 'tool',
-          name: functionName,
-          content: toolResult
-        })
-      }
-    }
-
-    counter++
-  }
-
-  // Check only after the loop has finished
-  if (!finalAnswerGenerated) {
-    console.log('Tool call limit reached: NO FINAL RESULT GENERATED')
-  }
-}
--- */
 
 export async function getGroqChatCompletion() {
   return groq.chat.completions.create({
