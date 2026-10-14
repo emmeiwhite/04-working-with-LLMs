@@ -49,3 +49,8 @@ Follow these steps in order.
 Important: Tavily performs the search; Groq runs your LLM. They are separate services.
 
 RUN SERVER WITH : node --env-file=.env server.js
+
+Todos:
+
+1. Get the message from the UI and call LLM with that message
+2. Get the result and show it in the UI
