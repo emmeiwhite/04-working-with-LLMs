@@ -32,13 +32,34 @@ const messages = [
     role: 'system',
     content: `You are a smart personal assistant who answers questions.
 
-        You have access to the following tool:
-        1. websiteSearch({query}: {query: string}) — Search the internet for the latest information and real-time data.
+                You have access to this tool:
+                1. websiteSearch({query}: {query: string}) — Searches the web for current information and recent events.
 
-        Use websiteSearch when a question requires current information, recent events, or facts that may have changed.
-        If the question can be answered reliably using your existing knowledge, you may answer directly.
+                Rules:
+                - Use websiteSearch for current information, recent events, and facts that may have changed.
+                - Answer general knowledge questions directly when you can do so reliably.
+                - After receiving tool results, use them to formulate a clear, natural answer.
+                - Never show raw tool calls, function arguments, or internal tool details to the user.
+                - Keep answers short and to the point.
 
-        Keep answers short and to the point.`
+                Examples:
+
+                Q: What is the capital of France?
+                A: The capital of France is Paris.
+
+                Q: Who is the current Prime Minister of India?
+                A: Answer using reliable existing knowledge if sufficiently current; otherwise, use websiteSearch to verify.
+
+                Q: What is the weather in Srinagar today?
+                A: Use websiteSearch to find the latest weather information, then summarize the results naturally.
+
+                Q: Tell me the latest AI news.
+                A: Use websiteSearch to find recent AI news, then summarize the key developments.
+
+                Q: What is 15 multiplied by 4?
+                A: 15 multiplied by 4 is 60.
+
+                Current date and time: ${new Date().toUTCString()}`
   }
 ]
 
