@@ -39,19 +39,23 @@ formDOM.addEventListener('submit', async e => {
 function appendMessage(text, role) {
   const wrapper = document.createElement('div')
   const bubble = document.createElement('div')
-  const paragraph = document.createElement('p')
 
   if (role === 'user') {
     wrapper.className = 'flex justify-end'
     bubble.className = 'max-w-[85%] rounded-2xl bg-gray-200 px-4 py-3 sm:max-w-[75%]'
+
+    // keep user message as plain text
+    const paragraph = document.createElement('p')
+    paragraph.textContent = text
+    bubble.append(paragraph)
   } else {
     wrapper.className = 'flex items-start gap-3'
     bubble.className = 'min-w-0 flex-1 pt-1 leading-7'
+
+    // Convert assistant Markdown to HTML, then sanitize it
+    bubble.innerHTML = DOMPurify.sanitize(marked.parse(text))
   }
 
-  paragraph.textContent = text
-
-  bubble.append(paragraph)
   wrapper.append(bubble)
   messagesDOM.append(wrapper)
 }
