@@ -47,3 +47,5 @@ Follow these steps in order.
    The LLM will request `websiteSearch` when it needs current information. Your app executes the function and returns the results to the LLM.
 
 Important: Tavily performs the search; Groq runs your LLM. They are separate services.
+
+RUN SERVER WITH : node --env-file=.env server.js
