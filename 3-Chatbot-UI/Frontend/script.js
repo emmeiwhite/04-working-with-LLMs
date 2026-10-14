@@ -11,6 +11,8 @@ textareaDOM.addEventListener('keydown', event => {
   }
 })
 
+// error state
+
 formDOM.addEventListener('submit', async e => {
   e.preventDefault()
 
@@ -23,15 +25,33 @@ formDOM.addEventListener('submit', async e => {
 
   textareaDOM.value = ''
 
+  // loading state
+  const loading = document.createElement('div')
+  loading.className = 'py-3 animate-pulse text-green-800 font-bold'
+  loading.textContent = 'Thinking ...'
+  loading.setAttribute('role', 'status')
+  loading.setAttribute('aria-live', 'polite')
+
+  messagesDOM.append(loading)
+  // Prevent duplicate submissions while waiting
+  const submitButton = formDOM.querySelector('button')
+  submitButton.disabled = true
+
   /** --- WE NEED TO MAKE REST API CALL TO THE BACKEND --- */
 
   try {
     const assistantMessage = await callServer(message)
 
     // Display the assistant's response
+    loading.remove()
     appendMessage(assistantMessage, 'assistant')
   } catch (error) {
-    console.log(error)
+    appendMessage('Sorry, something went wrong. Please try again.', 'assistant')
+  } finally {
+    // Always clean up whether the request fails or succeeds
+    loading.remove()
+    submitButton.disabled
+    textareaDOM.focus()
   }
 })
 
