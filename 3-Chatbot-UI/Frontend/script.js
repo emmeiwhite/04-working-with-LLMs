@@ -1,5 +1,3 @@
-console.log('Way and back again! An agents tale by Emmei White!')
-
 const messagesDOM = document.querySelector('.message')
 
 const textareaDOM = document.querySelector('textarea')
