@@ -11,15 +11,22 @@ app.get('/', (req, res) => {
 })
 
 app.post('/chat', async (req, res) => {
-  const { message } = req.body
+  const { message, sessionId } = req.body
+  // todo: Validate above fields
+  if (!message || !sessionId) {
+    return res.status(400).json({
+      message: 'message and sessionId are required'
+    })
+  }
 
   console.log('Message', message)
   // we need to make a call to our chatbot with the message as prompt
 
-  const result = await generate(message)
+  const result = await generate(message, sessionId)
 
   res.json({
-    message: result
+    message: result,
+    sessionId
   })
 })
 

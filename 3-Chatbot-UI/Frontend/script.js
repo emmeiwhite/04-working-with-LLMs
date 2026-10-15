@@ -4,6 +4,12 @@ const textareaDOM = document.querySelector('textarea')
 
 const formDOM = document.querySelector('form')
 
+// sessionId for in built Chatbot memory
+
+const sessionId = Date.now().toString(36) + Math.random().toString(36).substring(0, 8)
+
+console.log('SessionId test: ', sessionId)
+
 textareaDOM.addEventListener('keydown', event => {
   if (event.key === 'Enter' && !event.shiftKey) {
     event.preventDefault()
@@ -87,7 +93,8 @@ async function callServer(inputText) {
       'content-type': 'application/json'
     },
     body: JSON.stringify({
-      message: inputText
+      message: inputText,
+      sessionId
     })
   })
 

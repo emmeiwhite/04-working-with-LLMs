@@ -54,3 +54,29 @@ Todos:
 
 1. Get the message from the UI and call LLM with that message
 2. Get the result and show it in the UI
+
+# Adding memory to ChatBot
+
+- We are going to use inbuild node-cache library for it
+
+UI loads / page refreshes
+|
+v
+Generate sessionId
+|
+v
+User sends message
+|
+v
+Frontend sends message + sessionId ( a best place to add sessionId would be while making Post request to the backend)
+|
+v
+Backend retrieves history
+using sessionId
+|
+v
+LLM generates response
+|
+v
+Updated history saved
+in NodeCache

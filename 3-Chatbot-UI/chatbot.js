@@ -1,9 +1,13 @@
 import Groq from 'groq-sdk'
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
 
+import NodeCache from 'node-cache'
+
 // To install: npm i @tavily/core
 import { tavily } from '@tavily/core'
 const tvly = tavily({ apiKey: process.env.TAVILY_API_KEY })
+
+const cache = new NodeCache({ stdTTL: 60 * 60 * 24 }) // 24 hours
 
 // 1. Add tool definition to the Groq Request
 
@@ -27,7 +31,8 @@ const tools = [
   }
 ]
 
-const messages = [
+// System prompt
+const baseMessages = [
   {
     role: 'system',
     content: `You are a smart personal assistant who answers questions.
@@ -63,14 +68,16 @@ const messages = [
   }
 ]
 
-export async function generate(question) {
+export async function generate(question, sessionId) {
+  const messages = cache.get(sessionId) ?? baseMessages
+
   messages.push({
     role: 'user',
     content: question
   })
 
   while (true) {
-    const chatCompletion = await getGroqChatCompletion() // Making an LLM call after each loop
+    const chatCompletion = await getGroqChatCompletion(messages) // Making an LLM call after each loop
 
     messages.push(chatCompletion.choices[0].message)
 
@@ -78,6 +85,11 @@ export async function generate(question) {
 
     // Here the tool call has stopped and we have received the output
     if (!toolCalls) {
+      // here we can add all the messages available until now against the particular sessionId
+
+      cache.set(sessionId, messages)
+
+      console.log('CACHE :', JSON.stringify(cache.data, null, 2))
       return chatCompletion.choices[0].message.content
     }
 
@@ -87,6 +99,7 @@ export async function generate(question) {
       const functionArgs = tool.function.arguments
 
       if (functionName === 'websiteSearch') {
+        // run the tool call function, which in turn uses Tavily search
         const toolResult = await websiteSearch(JSON.parse(functionArgs))
         //   console.log('Tool Result', toolResult)
 
@@ -103,7 +116,7 @@ export async function generate(question) {
   }
 }
 
-export async function getGroqChatCompletion() {
+export async function getGroqChatCompletion(messages) {
   return groq.chat.completions.create({
     temperature: 0,
     messages,
