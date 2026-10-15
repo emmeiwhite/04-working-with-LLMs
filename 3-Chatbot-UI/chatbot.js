@@ -69,7 +69,7 @@ const baseMessages = [
 ]
 
 export async function generate(question, sessionId) {
-  const messages = cache.get(sessionId) ?? baseMessages
+  const messages = cache.get(sessionId) ?? [...baseMessages]
 
   messages.push({
     role: 'user',
@@ -99,7 +99,6 @@ export async function generate(question, sessionId) {
 
       cache.set(sessionId, messages)
 
-      //   console.log('CACHE :', JSON.stringify(cache.data, null, 2))
       return chatCompletion.choices[0].message.content
     }
 

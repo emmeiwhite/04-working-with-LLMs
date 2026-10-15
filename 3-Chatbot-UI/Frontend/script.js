@@ -8,7 +8,7 @@ const formDOM = document.querySelector('form')
 
 const sessionId = Date.now().toString(36) + Math.random().toString(36).substring(0, 8)
 
-console.log('SessionId test: ', sessionId)
+// console.log('SessionId test: ', sessionId)
 
 textareaDOM.addEventListener('keydown', event => {
   if (event.key === 'Enter' && !event.shiftKey) {
