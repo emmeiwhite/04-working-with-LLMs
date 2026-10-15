@@ -87,7 +87,7 @@ function appendMessage(text, role) {
 }
 
 async function callServer(inputText) {
-  const response = await fetch('http://localhost:3000/chat', {
+  const response = await fetch('https://zero4-working-with-llms.onrender.com/chat', {
     method: 'POST',
     headers: {
       'content-type': 'application/json'
