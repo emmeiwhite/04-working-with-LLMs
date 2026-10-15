@@ -76,7 +76,17 @@ export async function generate(question, sessionId) {
     content: question
   })
 
+  // Retires: The retries happens only during tool-calling. So, here we can set the logic for this
+
+  const MAX_TRIES = 2
+  let count = 0
   while (true) {
+    if (count >= MAX_TRIES) {
+      return 'Could not process yout request, something went wrong'
+    }
+
+    count++
+
     const chatCompletion = await getGroqChatCompletion(messages) // Making an LLM call after each loop
 
     messages.push(chatCompletion.choices[0].message)
@@ -89,7 +99,7 @@ export async function generate(question, sessionId) {
 
       cache.set(sessionId, messages)
 
-      console.log('CACHE :', JSON.stringify(cache.data, null, 2))
+      //   console.log('CACHE :', JSON.stringify(cache.data, null, 2))
       return chatCompletion.choices[0].message.content
     }
 

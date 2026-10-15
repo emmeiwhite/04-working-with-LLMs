@@ -56,7 +56,7 @@ formDOM.addEventListener('submit', async e => {
   } finally {
     // Always clean up whether the request fails or succeeds
     loading.remove()
-    submitButton.disabled
+    submitButton.disabled = false
     textareaDOM.focus()
   }
 })
